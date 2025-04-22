@@ -1,0 +1,21 @@
+{
+    "files.associations": {
+        "*.embeddedhtml": "html",
+        ".env*": "dotenv",
+        "*.chm": "cpp",
+        "new": "cpp",
+        "array": "cpp",
+        "string": "cpp",
+        "string_view": "cpp",
+        "*.tcc": "cpp",
+        "algorithm": "cpp",
+        "functional": "cpp",
+        "type_traits": "cpp"
+    },
+    "github.copilot.enable": {
+        "*": false,
+        "plaintext": true,
+        "markdown": false,
+        "scminput": false
+    }
+}

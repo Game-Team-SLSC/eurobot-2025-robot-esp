@@ -19,12 +19,22 @@ void setup() {
   // Running only steppers process on core 0 so we're getting the best of them
   configASSERT(xTaskCreatePinnedToCore(
     Pulley::run,
-    "Pulley update",
+    "Pulley runner",
     4096,
     NULL,
     3,
     NULL,
     0
+  ) == pdPASS);
+
+  configASSERT(xTaskCreatePinnedToCore(
+    Pulley::check,
+    "Pulley checker",
+    4096,
+    NULL,
+    1,
+    NULL,
+    1
   ) == pdPASS);
 
   configASSERT(xTaskCreatePinnedToCore(

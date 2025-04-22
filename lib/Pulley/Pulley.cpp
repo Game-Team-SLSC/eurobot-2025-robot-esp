@@ -1,5 +1,6 @@
 #include "Pulley.h"
 #include <GlobalSettings.h>
+#include <Logic.h>
 
 TMC2209Stepper Pulley::driverL = TMC2209Stepper(&Serial1, 0.11f, 0b01);
 TMC2209Stepper Pulley::driverR = TMC2209Stepper(&Serial2, 0.11f, 0b01);
@@ -13,8 +14,8 @@ const int STEPS_PER_MM = (MOTOR_STEPS_PER_REV * MICROSTEPS) / (2 * PI * PULLEY_D
 
 long positions[3][2] = {
     {0, 0}, // 0 mm
-    {PULLEY_TRANS_HEIGHT * STEPS_PER_MM, PULLEY_DIAMETER * STEPS_PER_MM}, // 20 mm
-    {PULLEY_UP_HEIGHT * STEPS_PER_MM, PULLEY_UP_HEIGHT * STEPS_PER_MM}, // 100
+    {static_cast<long>(PULLEY_TRANS_HEIGHT * STEPS_PER_MM), static_cast<long>(PULLEY_DIAMETER * STEPS_PER_MM)}, // 20 mm
+    {static_cast<long>(PULLEY_UP_HEIGHT * STEPS_PER_MM), static_cast<long>(PULLEY_UP_HEIGHT * STEPS_PER_MM)}, // 100
 };
 
 void Pulley::init() {
@@ -56,6 +57,22 @@ void Pulley::run(void *pvParameters) {
     for(;;) {
         steppers.run();
     }
+}
+
+void Pulley::check(void *pvParameters) {
+    bool sentSignal = false;
+    for(;;) {
+        if (stepperL.distanceToGo() == 0 && stepperR.distanceToGo() == 0) {
+            if (!sentSignal) {
+                sentSignal = true;
+                Logic::sendFeedback();
+            }
+        } else {
+            sentSignal = false;
+        }
+    }
+
+    vTaskDelay(10 / portTICK_PERIOD_MS);
 }
 
 void Pulley::setTarget(PulleyPosition newTarget) {

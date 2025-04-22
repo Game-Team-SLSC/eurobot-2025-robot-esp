@@ -3,13 +3,14 @@
 #include <TMCStepper.h>
 #include <AccelStepper.h>
 #include <MultiStepper.h>
-#include <models/PulleyPosition.h>
+#include <PulleyPosition.h>
 
 class Pulley {
     public:
         
     static void init();
     static void run(void *pvParameters);
+    static void check(void *pvParameters);
 
     static void setTarget(PulleyPosition target);
 

@@ -1,5 +1,8 @@
 #include <Logic.h>
 #include <Pulley.h>
+#include <ArduinoCommunication.h>
+
+QueueHandle_t Logic::commands = NULL;
 
 void Logic::init() {
     commands = xQueueCreate(10, sizeof(int));
@@ -7,6 +10,10 @@ void Logic::init() {
 
 void Logic::sendCommand(PulleyPosition position) {
     xQueueOverwrite(commands, (void *)&position);
+}
+
+void Logic::sendFeedback() {
+    ArduinoCommunication::sendFeedback();
 }
 
 void Logic::run(void *pvParameters) {

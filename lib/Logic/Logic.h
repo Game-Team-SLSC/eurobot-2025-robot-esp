@@ -2,7 +2,7 @@
 
 #include <FreeRTOS.h>
 #include <freertos/queue.h>
-#include <models/PulleyPosition.h>
+#include <PulleyPosition.h>
 
 class Logic {
     public:
@@ -10,6 +10,7 @@ class Logic {
     static void init();
     static void run(void *pvParameters);
     static void sendCommand(PulleyPosition position);
+    static void sendFeedback();
 
     private:
 

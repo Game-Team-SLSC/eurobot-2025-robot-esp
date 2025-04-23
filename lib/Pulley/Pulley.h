@@ -16,6 +16,7 @@ class Pulley {
 
     private:
     
+    static QueueHandle_t targetMailbox;
     static TMC2209Stepper driverL, driverR;
     static AccelStepper stepperL, stepperR;
     static MultiStepper steppers;

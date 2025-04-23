@@ -10,7 +10,10 @@
         "*.tcc": "cpp",
         "algorithm": "cpp",
         "functional": "cpp",
-        "type_traits": "cpp"
+        "type_traits": "cpp",
+        "istream": "cpp",
+        "ostream": "cpp",
+        "typeinfo": "cpp"
     },
     "github.copilot.enable": {
         "*": true,

@@ -10,6 +10,8 @@ AccelStepper Pulley::stepperR = AccelStepper(AccelStepper::DRIVER, STEPPER_R_STE
 
 MultiStepper Pulley::steppers = MultiStepper();
 
+QueueHandle_t Pulley::targetMailbox = NULL;
+
 const int STEPS_PER_MM = (MOTOR_STEPS_PER_REV * MICROSTEPS) / (2 * PI * PULLEY_DIAMETER);
 
 long positions[3][2] = {
@@ -49,8 +51,7 @@ void Pulley::init() {
     steppers.moveTo(positions[DOWN_POS]);
     steppers.runSpeedToPosition();
 
-    PulleyPosition target = PulleyPosition::DOWN_POS;
-    PulleyPosition newTarget = PulleyPosition::DOWN_POS;
+    setTarget(DOWN_POS);
 }
 
 void Pulley::run(void *pvParameters) {
@@ -60,15 +61,23 @@ void Pulley::run(void *pvParameters) {
 }
 
 void Pulley::check(void *pvParameters) {
-    bool sentSignal = false;
+    bool sentSignal = true;
+    PulleyPosition target;
+
     for(;;) {
+        PulleyPosition newTarget;
+
+        if ((xQueueReceive(targetMailbox, &newTarget, 0) == pdTRUE) && (newTarget != target)) {
+            target = newTarget;
+            sentSignal = false;
+            steppers.moveTo(positions[target]);
+        }
+
         if (stepperL.distanceToGo() == 0 && stepperR.distanceToGo() == 0) {
             if (!sentSignal) {
                 sentSignal = true;
-                Logic::sendFeedback();
+                Logic::sendFeedback(target);
             }
-        } else {
-            sentSignal = false;
         }
     }
 
@@ -76,5 +85,5 @@ void Pulley::check(void *pvParameters) {
 }
 
 void Pulley::setTarget(PulleyPosition newTarget) {
-    steppers.moveTo(positions[newTarget]);
+    xQueueOverwrite(targetMailbox, (void *)&newTarget);
 }

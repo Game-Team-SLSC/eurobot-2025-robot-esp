@@ -21,7 +21,7 @@ void ArduinoCommunication::check(void *pvParameters) {
     vTaskDelay(10 / portTICK_PERIOD_MS);
 }
 
-void ArduinoCommunication::sendFeedback() {
-    arduinoSerial.write(1);
+void ArduinoCommunication::sendFeedback(PulleyPosition position) {
+    arduinoSerial.write(position);
     arduinoSerial.flush();
 }

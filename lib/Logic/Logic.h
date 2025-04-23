@@ -10,7 +10,7 @@ class Logic {
     static void init();
     static void run(void *pvParameters);
     static void sendCommand(PulleyPosition position);
-    static void sendFeedback();
+    static void sendFeedback(PulleyPosition position);
 
     private:
 

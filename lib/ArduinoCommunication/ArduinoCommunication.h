@@ -8,7 +8,7 @@ class ArduinoCommunication {
         
     static void init();
     static void check(void *pvParameters);
-    static void sendFeedback();
+    static void sendFeedback(PulleyPosition position);
         
     private:
 

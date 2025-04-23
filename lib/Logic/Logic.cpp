@@ -12,8 +12,8 @@ void Logic::sendCommand(PulleyPosition position) {
     xQueueOverwrite(commands, (void *)&position);
 }
 
-void Logic::sendFeedback() {
-    ArduinoCommunication::sendFeedback();
+void Logic::sendFeedback(PulleyPosition position) {
+    ArduinoCommunication::sendFeedback(position);
 }
 
 void Logic::run(void *pvParameters) {

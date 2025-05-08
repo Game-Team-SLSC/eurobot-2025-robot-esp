@@ -4,6 +4,8 @@
 #include <Pulley.h>
 
 void setup() {
+  delay(5000);
+
   Serial.begin(9600);
   Serial.println("Starting...");
 
@@ -34,7 +36,7 @@ void setup() {
     NULL,
     1,
     NULL,
-    1
+    0
   ) == pdPASS);
 
   configASSERT(xTaskCreatePinnedToCore(
@@ -44,7 +46,7 @@ void setup() {
     NULL,
     1,
     NULL,
-    1
+    0
   ) == pdPASS);
   
   configASSERT(xTaskCreatePinnedToCore(
@@ -57,7 +59,7 @@ void setup() {
     1
   ) == pdPASS);
 
-  vTaskDelete(NULL);
+  Serial.println("ESP Ready");
 }
 
 void loop() {}

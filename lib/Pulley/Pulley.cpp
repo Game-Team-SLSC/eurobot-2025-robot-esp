@@ -5,19 +5,19 @@
 TMC2209Stepper Pulley::driverL = TMC2209Stepper(&Serial1, 0.11f, 0b01);
 TMC2209Stepper Pulley::driverR = TMC2209Stepper(&Serial2, 0.11f, 0b01);
 
-AccelStepper Pulley::stepperL = AccelStepper(AccelStepper::DRIVER, STEPPER_L_STEP_PIN, STEPPER_L_DIR_PIN);
-AccelStepper Pulley::stepperR = AccelStepper(AccelStepper::DRIVER, STEPPER_R_STEP_PIN, STEPPER_R_DIR_PIN);
+FastAccelStepperEngine Pulley::engineL = &FastAccelStepperEngine();
+FastAccelStepperEngine Pulley::engineR = &FastAccelStepperEngine();
 
-MultiStepper Pulley::steppers = MultiStepper();
+FastAccelStepper 
 
-QueueHandle_t Pulley::targetMailbox = NULL;
+QueueHandle_t Pulley::targetMailbox = xQueueCreate(1, sizeof(PulleyPosition));
 
-const int STEPS_PER_MM = (MOTOR_STEPS_PER_REV * MICROSTEPS) / (2 * PI * PULLEY_DIAMETER);
+const int STEPS_PER_MM = (MOTOR_STEPS_PER_REV * MICROSTEPS) / (PI * PULLEY_DIAMETER);
 
 long positions[3][2] = {
     {0, 0}, // 0 mm
-    {static_cast<long>(PULLEY_TRANS_HEIGHT * STEPS_PER_MM), static_cast<long>(PULLEY_DIAMETER * STEPS_PER_MM)}, // 20 mm
-    {static_cast<long>(PULLEY_UP_HEIGHT * STEPS_PER_MM), static_cast<long>(PULLEY_UP_HEIGHT * STEPS_PER_MM)}, // 100
+    {static_cast<long>(PULLEY_TRANS_HEIGHT * STEPS_PER_MM), -static_cast<long>(PULLEY_DIAMETER * STEPS_PER_MM)}, // 20 mm
+    {static_cast<long>(10 * PULLEY_UP_HEIGHT * STEPS_PER_MM), -static_cast<long>(10 * PULLEY_UP_HEIGHT * STEPS_PER_MM)}, // 100 mm
 };
 
 void Pulley::init() {
@@ -32,31 +32,33 @@ void Pulley::init() {
 
     stepperL.setEnablePin(STEPPER_ENABLE_PIN); // Enable pin
     stepperL.setPinsInverted(false, false, true); // Invert direction pin
-    stepperL.setMaxSpeed(PULLEY_SPEED * STEPS_PER_MM);
+    stepperL.setMaxSpeed(300000);
 
     driverR.begin();
     driverR.rms_current(900);
     driverR.microsteps(0);
     driverR.en_spreadCycle(true);
     driverR.pwm_autoscale(true);
-    driverR.shaft(true);
 
     stepperR.setEnablePin(STEPPER_ENABLE_PIN); // Enable pin
     stepperR.setPinsInverted(false, false, true); // Invert direction pin
-    stepperR.setMaxSpeed(PULLEY_SPEED * STEPS_PER_MM);
+    stepperR.setMaxSpeed(300000);
+    stepperR.enableOutputs();
+    stepperL.enableOutputs();
 
     steppers.addStepper(stepperL);
     steppers.addStepper(stepperR);
 
     steppers.moveTo(positions[DOWN_POS]);
-    steppers.runSpeedToPosition();
 
     setTarget(DOWN_POS);
 }
 
 void Pulley::run(void *pvParameters) {
+
     for(;;) {
         steppers.run();
+        vTaskDelay(1);
     }
 }
 
@@ -79,9 +81,9 @@ void Pulley::check(void *pvParameters) {
                 Logic::sendFeedback(target);
             }
         }
+        vTaskDelay(10 / portTICK_PERIOD_MS);
     }
 
-    vTaskDelay(10 / portTICK_PERIOD_MS);
 }
 
 void Pulley::setTarget(PulleyPosition newTarget) {

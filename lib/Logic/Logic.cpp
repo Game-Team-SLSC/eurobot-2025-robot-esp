@@ -2,10 +2,9 @@
 #include <Pulley.h>
 #include <ArduinoCommunication.h>
 
-QueueHandle_t Logic::commands = NULL;
+QueueHandle_t Logic::commands = xQueueCreate(1, sizeof(int));;
 
 void Logic::init() {
-    commands = xQueueCreate(10, sizeof(int));
 }
 
 void Logic::sendCommand(PulleyPosition position) {

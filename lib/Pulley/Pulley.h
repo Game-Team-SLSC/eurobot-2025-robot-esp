@@ -1,9 +1,9 @@
 #pragma once
 
 #include <TMCStepper.h>
-#include <AccelStepper.h>
-#include <MultiStepper.h>
 #include <PulleyPosition.h>
+#include <FastAccelStepper.h>
+#include <FreeRTOS.h>
 
 class Pulley {
     public:
@@ -18,6 +18,6 @@ class Pulley {
     
     static QueueHandle_t targetMailbox;
     static TMC2209Stepper driverL, driverR;
-    static AccelStepper stepperL, stepperR;
-    static MultiStepper steppers;
+    static FastAccelStepperEngine engineL, engineR;
+    static FastAccelStepper *stepperL, *stepperR; 
 };

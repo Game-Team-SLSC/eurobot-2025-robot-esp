@@ -16,9 +16,9 @@ void ArduinoCommunication::check(void *pvParameters) {
             arduinoSerial.read((uint8_t*)&pos, sizeof(PulleyPosition));
             Logic::sendCommand(pos);
         }
+        vTaskDelay(10 / portTICK_PERIOD_MS);
     }
     
-    vTaskDelay(10 / portTICK_PERIOD_MS);
 }
 
 void ArduinoCommunication::sendFeedback(PulleyPosition position) {

@@ -7,7 +7,7 @@
 #define PULLEY_UP_HEIGHT 100 // mm
 #define PULLEY_TRANS_HEIGHT 20 // mm
 #define PULLEY_ZERO 0 // mm
-#define PULLEY_SPEED 3000 // mm/s
+#define PULLEY_SPEED 150 // mm/s
 
 // COMMUNICATION
 

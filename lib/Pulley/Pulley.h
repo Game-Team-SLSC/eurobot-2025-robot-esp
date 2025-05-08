@@ -4,13 +4,13 @@
 #include <PulleyPosition.h>
 #include <FastAccelStepper.h>
 #include <FreeRTOS.h>
+#include <freertos/queue.h>
 
 class Pulley {
     public:
         
     static void init();
     static void run(void *pvParameters);
-    static void check(void *pvParameters);
 
     static void setTarget(PulleyPosition target);
 

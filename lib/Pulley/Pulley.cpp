@@ -5,8 +5,7 @@
 TMC2209Stepper Pulley::driverL = TMC2209Stepper(&Serial1, 0.11f, 0b01);
 TMC2209Stepper Pulley::driverR = TMC2209Stepper(&Serial2, 0.11f, 0b01);
 
-FastAccelStepperEngine Pulley::engineL = FastAccelStepperEngine();
-FastAccelStepperEngine Pulley::engineR = FastAccelStepperEngine();
+FastAccelStepperEngine Pulley::engine = FastAccelStepperEngine();
 
 FastAccelStepper *Pulley::stepperL = NULL;
 FastAccelStepper *Pulley::stepperR = NULL;
@@ -18,7 +17,7 @@ const int STEPS_PER_MM = (MOTOR_STEPS_PER_REV * MICROSTEPS) / (PI * PULLEY_DIAME
 int positions[3][2] = {
     {0, 0}, // 0 mm
     {static_cast<long>(PULLEY_TRANS_HEIGHT * STEPS_PER_MM), -static_cast<long>(PULLEY_DIAMETER * STEPS_PER_MM)}, // 20 mm
-    {static_cast<long>(10 * PULLEY_UP_HEIGHT * STEPS_PER_MM), -static_cast<long>(10 * PULLEY_UP_HEIGHT * STEPS_PER_MM)}, // 100 mm
+    {static_cast<long>(PULLEY_UP_HEIGHT * STEPS_PER_MM), -static_cast<long>(PULLEY_UP_HEIGHT * STEPS_PER_MM)}, // 100 mm
 };
 
 void Pulley::init() {
@@ -27,34 +26,30 @@ void Pulley::init() {
 
     driverL.begin();
     driverL.rms_current(900);
-    driverL.microsteps(0);
+    driverL.microsteps(MICROSTEPS);
     driverL.en_spreadCycle(true);
     driverL.pwm_autoscale(true);
 
-    engineL.init(1);
-
-    stepperL = engineL.stepperConnectToPin(STEPPER_L_STEP_PIN);
+    engine.init();
+    stepperL = engine.stepperConnectToPin(STEPPER_L_STEP_PIN, DRIVER_RMT);
     stepperL->setDirectionPin(STEPPER_L_DIR_PIN);
     stepperL->setEnablePin(STEPPER_ENABLE_PIN); // Enable pin
     stepperL->setSpeedInHz(STEPS_PER_MM * PULLEY_SPEED);
-    stepperL->setAcceleration(250);
+    stepperL->setAcceleration(PULLEY_ACCEL * STEPS_PER_MM);
     stepperL->enableOutputs();
     
     driverR.begin();
     driverR.rms_current(900);
-    driverR.microsteps(0);
+    driverR.microsteps(MICROSTEPS);
     driverR.en_spreadCycle(true);
     driverR.pwm_autoscale(true);
 
-    engineR.init(1);
-    
-    stepperR = engineR.stepperConnectToPin(STEPPER_R_STEP_PIN);
-    
-    stepperR = engineR.stepperConnectToPin(STEPPER_R_STEP_PIN);
+
+    stepperR = engine.stepperConnectToPin(STEPPER_R_STEP_PIN);
     stepperR->setDirectionPin(STEPPER_R_DIR_PIN);
     stepperR->setEnablePin(STEPPER_ENABLE_PIN); // Enable pin
     stepperR->setSpeedInHz(STEPS_PER_MM * PULLEY_SPEED);
-    stepperR->setAcceleration(250);
+    stepperR->setAcceleration(PULLEY_ACCEL * STEPS_PER_MM);
     stepperR->enableOutputs();
 
     setTarget(DOWN_POS);
@@ -68,6 +63,7 @@ void Pulley::run(void *pvParameters) {
         PulleyPosition newTarget;
 
         if ((xQueueReceive(targetMailbox, &newTarget, 0) == pdTRUE) && (newTarget != target)) {
+            Serial.println(newTarget);
             target = newTarget;
             sentSignal = false;
             stepperL->moveTo(positions[target][0]);

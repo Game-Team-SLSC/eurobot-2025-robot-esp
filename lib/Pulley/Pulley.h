@@ -18,6 +18,6 @@ class Pulley {
     
     static QueueHandle_t targetMailbox;
     static TMC2209Stepper driverL, driverR;
-    static FastAccelStepperEngine engineL, engineR;
+    static FastAccelStepperEngine engine;
     static FastAccelStepper *stepperL, *stepperR; 
 };

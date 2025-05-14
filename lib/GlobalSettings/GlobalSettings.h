@@ -4,10 +4,11 @@
 
 // CALIBRATING
 
-#define PULLEY_UP_HEIGHT 100 // mm
-#define PULLEY_TRANS_HEIGHT 20 // mm
+#define PULLEY_UP_HEIGHT 275 // mm
+#define PULLEY_TRANS_HEIGHT 40 // mm
 #define PULLEY_ZERO 0 // mm
-#define PULLEY_SPEED 800 // mm/s
+#define PULLEY_SPEED 200 // mm/s
+#define PULLEY_ACCEL 230 // mm/s2
 
 // COMMUNICATION
 
@@ -30,6 +31,6 @@
 #define STEPPER_R_TX_PIN D8
 #define STEPPER_R_RX_PIN D7
 
-#define PULLEY_DIAMETER 7.5f // mm
+#define PULLEY_DIAMETER 15.f // mm
 #define MOTOR_STEPS_PER_REV 400
-#define MICROSTEPS 1
+#define MICROSTEPS 4

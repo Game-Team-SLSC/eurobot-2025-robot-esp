@@ -16,20 +16,9 @@ void setup() {
   Serial.println("Initializing Logic...");
   Logic::init();
 
-  // Running only steppers process on core 0 so we're getting the best of them
   configASSERT(xTaskCreatePinnedToCore(
     Pulley::run,
     "Pulley runner",
-    4096,
-    NULL,
-    3,
-    NULL,
-    0
-  ) == pdPASS);
-
-  configASSERT(xTaskCreatePinnedToCore(
-    Pulley::check,
-    "Pulley checker",
     4096,
     NULL,
     1,
@@ -57,7 +46,7 @@ void setup() {
     1
   ) == pdPASS);
 
-  vTaskDelete(NULL);
+  Serial.println("ESP Ready");
 }
 
 void loop() {}

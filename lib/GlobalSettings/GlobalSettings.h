@@ -4,11 +4,11 @@
 
 // CALIBRATING
 
-#define PULLEY_UP_HEIGHT 275 // mm
+#define PULLEY_UP_HEIGHT 267 // mm
 #define PULLEY_TRANS_HEIGHT 40 // mm
 #define PULLEY_ZERO 0 // mm
 #define PULLEY_SPEED 200 // mm/s
-#define PULLEY_ACCEL 230 // mm/s2
+#define PULLEY_ACCEL 220 // mm/s2
 
 // COMMUNICATION
 
